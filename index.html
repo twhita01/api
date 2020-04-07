@@ -1,0 +1,95 @@
+<!doctype html>
+<html>
+<head>
+	<title>Lyrics</title>
+	<meta charset="utf-8"/>
+<style>
+	body{
+		font-family: avenir;
+		background-color: #D7FFF9;
+	}
+	.text{
+		max-width: 800px;
+		background-color: #F7FEFF;
+		margin-bottom: 20px;
+		padding: 10px;
+	}
+	.title{
+		max-width: 800px;
+		background-color: white;
+		margin-bottom: 20px;
+		padding: 10px;
+		text-align: center;
+	}
+	}
+</style>
+</head>
+
+
+<body>
+
+	<h1 class="title">Lyric Search</h1>
+	<div class = "text">I used the database "lyrics.ovh". It is a databse that has the lyrics for most existing songs. Entering the appropriate song title and artist in the URL will return XML data of the song's lyrics.</div>
+	<div class = "text">I found this database through a 
+	<a href="https://github.com/public-apis/public-apis">Github Free API Directory.</a></div>
+	<div class = "text">The API "GET" request uses two options based on the user input. Both the song title and artist inform the structure of the URL and the subsequent JSON lyric data retrieved.</div>
+	<div class ="text"> This API would be helpful for musicians who need to learn the lyrics for a given song. This could also help fans who are curious about the lyrics to their favorite songs. </div>
+	<div class ="title"> <form>
+	Song Name: <input type="text" id="song">
+	Artist: <input type="text" id="artist">
+	</form> <br>
+ 	<button id="search"> Search Lyrics </button>
+	</div>
+
+	<div id="data" class = "text"></div>
+	
+	
+<script language="javascript">
+		
+	document.getElementById("search").onclick = function() {go()};
+
+	function go(){
+		if(document.getElementById("artist").value == "" ||
+		  document.getElementById("song").value == ""){
+			document.getElementById("data").innerHTML = "Enter Song and Artist";
+			return;
+			
+		}
+		var x = document.getElementById("artist").value;
+		var y = document.getElementById("song").value;
+		getLyrics(x,y);
+	}
+	
+      function getLyrics(artist, song) {
+          request = new XMLHttpRequest();
+          console.log("1 - request object created");
+          var site = "https://api.lyrics.ovh/v1/" + artist + "/" + song;
+          request.open("GET", site, true);
+
+          console.log("2 - opened request file");
+
+          request.onreadystatechange = function() {
+              console.log("3 - readystatechange event fired.");
+
+              if (request.readyState == 4 && request.status == 200) {
+
+                  result = request.responseText;
+                  var lyrics = JSON.parse(result);
+
+                  document.getElementById("data").innerHTML = lyrics["lyrics"]; 
+				  
+              } else if (request.readyState == 4 && request.status != 200) {
+                  document.getElementById("data").innerHTML = "Something is wrong!  Check that your song and artist are entered correctly";
+              } else {
+				  document.getElementById("data").innerHTML = "Loading..."
+			  }
+
+          }
+          request.send();
+          console.log("4 - Request sent");
+      }
+	
+</script>	
+	
+</body>
+</html>
